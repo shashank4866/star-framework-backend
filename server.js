@@ -28,6 +28,14 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
+  
+  // Auto-run migration on startup (Workaround for Render Free Tier shell access)
+  try {
+    const { run: runMigration } = require('./apply_alter.js');
+    await runMigration();
+  } catch (migErr) {
+    console.error('[Startup] Migration trigger failed:', migErr.message);
+  }
 });
