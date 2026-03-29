@@ -7,7 +7,7 @@ const { sendNotification } = require('../config/firebase');
 const router = express.Router();
 
 router.use(authMiddleware);
-router.use(roleMiddleware(['Architect']));
+router.use(roleMiddleware(['Architect', 'System Designer']));
 
 router.get('/pending', async (req, res, next) => {
   try {
@@ -24,7 +24,10 @@ router.get('/pending', async (req, res, next) => {
       ORDER BY aa.start_time DESC
     `);
     res.json(rows);
-  } catch (err) { next(err); }
+  } catch (err) { 
+    console.error('[Architect] Error fetching pending reviews:', err.message);
+    next(err); 
+  }
 });
 
 router.get('/users', async (req, res, next) => {
@@ -34,11 +37,14 @@ router.get('/users', async (req, res, next) => {
        FROM users u
        JOIN levels l ON l.id = u.level_id
        JOIN roles r ON r.id = u.role_id
-       WHERE r.name != 'Architect'
+       WHERE r.name != 'Architect' AND r.name != 'System Designer'
        ORDER BY u.name
      `);
      res.json(rows);
-  } catch(err) { next(err); }
+  } catch(err) { 
+    console.error('[Architect] Error fetching global user matrix:', err.message);
+    next(err); 
+  }
 });
 
 router.post('/assign-badge', async (req, res, next) => {
@@ -50,9 +56,13 @@ router.post('/assign-badge', async (req, res, next) => {
      `, [user_id, req.user.id, badge_name]);
 
      // Trigger Push Notification instantly!
+     console.log(`[Architect] Dispatching badge notification to user ${user_id}...`);
      await sendNotification(user_id, '🏅 New Badge Awarded!', `Architect granted you the ${badge_name} badge! Check your Dashboard!`);
      res.json({ message: 'Badge natively mapped successfully.' });
-  } catch(err) { next(err); }
+  } catch(err) { 
+    console.error('[Architect] Badge assignment failed:', err.message);
+    next(err); 
+  }
 });
 
 router.get('/attempt/:attempt_id', async (req, res, next) => {
@@ -88,7 +98,10 @@ router.get('/attempt/:attempt_id', async (req, res, next) => {
         attempt: attRes.rows[0],
         questions: displayQuestions
     });
-  } catch(err) { next(err); }
+  } catch(err) { 
+    console.error('[Architect] Error fetching attempt replay:', err.message);
+    next(err); 
+  }
 });
 
 router.post('/attempt/:attempt_id/evaluate', async (req, res, next) => {
@@ -129,17 +142,24 @@ router.post('/attempt/:attempt_id/evaluate', async (req, res, next) => {
           total_score = (SELECT COALESCE(SUM(score), 0) FROM user_answers WHERE attempt_id = $1) 
       WHERE id = $1
     `, [attempt_id]);
+
     await client.query('COMMIT');
 
     // Trigger FCM Evaluation Notification
-    await sendNotification(attRes.rows[0].user_id, '📝 Assessment Evaluated!', 'Your latest submission has been reviewed. View your Badge Progress!');
+    console.log(`[Architect] Dispatching evaluation notification to user ${attRes.rows[0].user_id}...`);
+    try {
+      await sendNotification(attRes.rows[0].user_id, '📝 Assessment Evaluated!', 'Your latest submission has been reviewed. View your Badge Progress!');
+    } catch (fcmErr) {
+      console.warn('[Architect] Notification dispatch failed but evaluation saved:', fcmErr.message);
+    }
     
     res.json({ message: 'Review successfully submitted' });
   } catch (err) {
-    await client.query('ROLLBACK');
+    if (client) await client.query('ROLLBACK');
+    console.error('[Architect] Evaluation submission failed:', err.message);
     next(err);
   } finally {
-    client.release();
+    if (client) client.release();
   }
 });
 
