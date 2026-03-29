@@ -1,0 +1,26 @@
+LevelName,PowerName,CapabilityName,TaskName,SubtaskName,AssessmentTitle,TimeLimitMins,PassingScore,QuestType,QuestMarks,QuestionText,OptionText,OptionIsCorrect
+Trainee,Frontend Mastery,HTML5 Fundamentals,Structural Markup,Semantic Elements,HTML5 Core Exam,30,80,MCQ,10,Which HTML element is used to define an internal style sheet?,<style>,true
+Trainee,Frontend Mastery,HTML5 Fundamentals,Structural Markup,Semantic Elements,HTML5 Core Exam,30,80,MCQ,10,Which HTML element is used to define an internal style sheet?,<script>,false
+Trainee,Frontend Mastery,HTML5 Fundamentals,Structural Markup,Semantic Elements,HTML5 Core Exam,30,80,MCQ,10,Which HTML element is used to define an internal style sheet?,<css>,false
+Trainee,Frontend Mastery,HTML5 Fundamentals,Structural Markup,Semantic Elements,HTML5 Core Exam,30,80,MCQ,10,Which HTML element is used to define an internal style sheet?,<link>,false
+Trainee,Frontend Mastery,HTML5 Fundamentals,Structural Markup,Semantic Elements,HTML5 Core Exam,30,80,LOG,30,Write a brief semantic HTML page layout with a header main and footer.,,
+Trainee,Frontend Mastery,CSS3 Styling,Responsive Design,Flexbox Layouts,CSS3 Flexbox Exam,30,80,MCQ,10,Which CSS property controls the background color?,background-color,true
+Trainee,Frontend Mastery,CSS3 Styling,Responsive Design,Flexbox Layouts,CSS3 Flexbox Exam,30,80,MCQ,10,Which CSS property controls the background color?,color,false
+Trainee,Frontend Mastery,CSS3 Styling,Responsive Design,Flexbox Layouts,CSS3 Flexbox Exam,30,80,MCQ,10,Which CSS property controls the background color?,bgcolor,false
+Trainee,Frontend Mastery,CSS3 Styling,Responsive Design,Flexbox Layouts,CSS3 Flexbox Exam,30,80,MCQ,10,Which CSS property controls the background color?,bg-color,false
+Trainee,Frontend Mastery,CSS3 Styling,Responsive Design,Flexbox Layouts,CSS3 Flexbox Exam,30,80,LOG,30,Explain the difference between specify justify-content and align-items in flexbox.,,
+Trainee,Frontend Mastery,JavaScript Basics,Variables and Types,ES6 Let and Const,JavaScript Core Exam,30,80,MCQ,10,Which keyword is used to declare a block-scoped variable that can be reassigned?,let,true
+Trainee,Frontend Mastery,JavaScript Basics,Variables and Types,ES6 Let and Const,JavaScript Core Exam,30,80,MCQ,10,Which keyword is used to declare a block-scoped variable that can be reassigned?,var,false
+Trainee,Frontend Mastery,JavaScript Basics,Variables and Types,ES6 Let and Const,JavaScript Core Exam,30,80,MCQ,10,Which keyword is used to declare a block-scoped variable that can be reassigned?,global,false
+Trainee,Frontend Mastery,JavaScript Basics,Variables and Types,ES6 Let and Const,JavaScript Core Exam,30,80,MCQ,10,Which keyword is used to declare a block-scoped variable that can be reassigned?,dim,false
+Trainee,Frontend Mastery,JavaScript Basics,Variables and Types,ES6 Let and Const,JavaScript Core Exam,30,80,LOG,30,Write a JS function that securely parses a JSON string mapping exception tracking.,,
+Trainee,Frontend Mastery,React Library,Component Architecture,State Management,React State Exam,45,80,MCQ,10,What Hook is used to instantiate mutable state in a functional component?,useState,true
+Trainee,Frontend Mastery,React Library,Component Architecture,State Management,React State Exam,45,80,MCQ,10,What Hook is used to instantiate mutable state in a functional component?,useEffect,false
+Trainee,Frontend Mastery,React Library,Component Architecture,State Management,React State Exam,45,80,MCQ,10,What Hook is used to instantiate mutable state in a functional component?,useContext,false
+Trainee,Frontend Mastery,React Library,Component Architecture,State Management,React State Exam,45,80,MCQ,10,What Hook is used to instantiate mutable state in a functional component?,useReducer,false
+Trainee,Frontend Mastery,React Library,Component Architecture,State Management,React State Exam,45,80,LOG,30,Write a basic React counter component strictly utilizing useState.,,
+Trainee,Frontend Mastery,Version Control,Git Basics,Branching and Merging,Git Mastery Exam,20,80,MCQ,10,Which command explicitly structures a new local branch?,git branch,true
+Trainee,Frontend Mastery,Version Control,Git Basics,Branching and Merging,Git Mastery Exam,20,80,MCQ,10,Which command explicitly structures a new local branch?,git commit,false
+Trainee,Frontend Mastery,Version Control,Git Basics,Branching and Merging,Git Mastery Exam,20,80,MCQ,10,Which command explicitly structures a new local branch?,git push,false
+Trainee,Frontend Mastery,Version Control,Git Basics,Branching and Merging,Git Mastery Exam,20,80,MCQ,10,Which command explicitly structures a new local branch?,git pull,false
+Trainee,Frontend Mastery,Version Control,Git Basics,Branching and Merging,Git Mastery Exam,20,80,LOG,30,Explain your conceptual approach to resolving a complex merge conflict.,,
