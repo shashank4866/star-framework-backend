@@ -117,4 +117,17 @@ router.get('/attempt/:attempt_id/feedback', async (req, res, next) => {
   } catch(err) { next(err); }
 });
 
+router.get('/badges', async (req, res, next) => {
+  try {
+    const { rows } = await db.query(`
+      SELECT ab.id, ab.badge_name, ab.created_at, u.name as architect_name
+      FROM assigned_badges ab
+      JOIN users u ON u.id = ab.architect_id
+      WHERE ab.user_id = $1
+      ORDER BY ab.created_at DESC
+    `, [req.user.id]);
+    res.json(rows);
+  } catch (err) { next(err); }
+});
+
 module.exports = router;

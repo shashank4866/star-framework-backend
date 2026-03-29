@@ -3,17 +3,19 @@ const admin = require('firebase-admin');
 const serviceAccount = {
   projectId: process.env.FIREBASE_PROJECT_ID,
   clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  privateKey: (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
 };
 
-if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_PRIVATE_KEY) {
-  console.error('[Firebase] CRITICAL: Missing Firebase environment variables in Render!');
+if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_PRIVATE_KEY || process.env.FIREBASE_PRIVATE_KEY.includes('...')) {
+  console.error('[Firebase] CRITICAL: Missing or placeholder Firebase environment variables. FCM push will be disabled.');
 }
 
+let firebaseInitialized = false;
 try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
+  firebaseInitialized = true;
   console.log('[Firebase] Admin SDK initialized successfully.');
 } catch (initErr) {
   console.error('[Firebase] Initialization Failed:', initErr.message);
