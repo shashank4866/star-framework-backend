@@ -1,23 +1,25 @@
--- PERFORMANCE OPTIMIZATION (INDEXING)
-CREATE INDEX IF NOT EXISTS idx_assessment_attempts_user_id ON assessment_attempts(user_id);
-CREATE INDEX IF NOT EXISTS idx_assessment_attempts_assessment_id ON assessment_attempts(assessment_id);
-CREATE INDEX IF NOT EXISTS idx_attempt_questions_attempt_id ON attempt_questions(attempt_id);
-CREATE INDEX IF NOT EXISTS idx_attempt_options_attempt_id ON attempt_options(attempt_id);
-CREATE INDEX IF NOT EXISTS idx_user_answers_attempt_id ON user_answers(attempt_id);
+-- ALTERATIONS FOR EXISTING DATABASE
+ALTER TABLE users ADD COLUMN IF NOT EXISTS fcm_token VARCHAR(255);
 
--- ASSESSMENT SCORING IMPROVEMENTS
-ALTER TABLE assessment_attempts ADD COLUMN IF NOT EXISTS total_score INT;
-ALTER TABLE user_answers ADD COLUMN IF NOT EXISTS is_correct BOOLEAN;
-ALTER TABLE questions ADD COLUMN IF NOT EXISTS marks INT DEFAULT 1;
-
--- ANTI-CHEAT TRACKING
+ALTER TABLE assessment_attempts ADD COLUMN IF NOT EXISTS total_score INT DEFAULT 0;
 ALTER TABLE assessment_attempts ADD COLUMN IF NOT EXISTS violations INT DEFAULT 0;
 
--- TIMESTAMP CONSISTENCY
-ALTER TABLE user_answers ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
-ALTER TABLE attempt_questions ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
-ALTER TABLE attempt_options ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE user_answers ADD COLUMN IF NOT EXISTS is_correct BOOLEAN;
 
--- SOFT DELETE SUPPORT (OPTIONAL)
-ALTER TABLE users ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP;
-ALTER TABLE assessments ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP;
+-- NOTIFICATION HISTORY
+CREATE TABLE IF NOT EXISTS notification_history (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(200),
+  body TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ASSIGNED BADGES
+CREATE TABLE IF NOT EXISTS assigned_badges (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  architect_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  badge_name VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

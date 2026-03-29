@@ -4,32 +4,37 @@ const path = require('path');
 require('dotenv').config();
 
 async function run() {
-  const isRemote = !!process.env.DATABASE_URL;
-  const config = isRemote ? {
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-  } : {
-    user: process.env.DB_USER || 'postgres',
-    host: process.env.DB_HOST || 'localhost',
-    database: process.env.DB_NAME || 'lms3',
-    password: process.env.DB_PASSWORD || 'admin',
-    port: process.env.DB_PORT || 5432,
-  };
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    console.error('DATABASE_URL environment variable is missing!');
+    process.exit(1);
+  }
 
-  const client = new Client(config);
+  const client = new Client({
+    connectionString,
+    ssl: { rejectUnauthorized: false }
+  });
 
   try {
     await client.connect();
-    console.log('Connected to lms3 DB for migrations.');
+    console.log('Connected to Render database for migration.');
 
-    const alterSql = fs.readFileSync(path.join(__dirname, 'src/schema/alter.sql'), 'utf-8');
+    const alterSqlPath = path.join(__dirname, 'src/schema/alter.sql');
+    if (!fs.existsSync(alterSqlPath)) {
+        throw new Error(`Migration file not found at ${alterSqlPath}`);
+    }
+
+    const alterSql = fs.readFileSync(alterSqlPath, 'utf-8');
+    console.log('Applying migration script...');
     await client.query(alterSql);
-    console.log('alter.sql executed successfully.');
+    console.log('✅ Migration applied successfully!');
 
   } catch (err) {
-    console.error('Migration Error:', err);
+    console.error('❌ Migration failed:', err.message);
+    if (err.detail) console.error('Detail:', err.detail);
   } finally {
     await client.end();
   }
 }
+
 run();

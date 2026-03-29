@@ -21,6 +21,7 @@ CREATE TABLE users (
   password_hash VARCHAR(255) NOT NULL,
   role_id UUID REFERENCES roles(id) ON DELETE RESTRICT,
   level_id UUID REFERENCES levels(id) ON DELETE RESTRICT,
+  fcm_token VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -90,6 +91,8 @@ CREATE TABLE assessment_attempts (
   end_time TIMESTAMP,
   status VARCHAR(30) CHECK (status IN ('in_progress', 'submitted', 'pending_review', 'evaluated')) DEFAULT 'in_progress',
   attempt_number INT DEFAULT 1,
+  total_score INT DEFAULT 0,
+  violations INT DEFAULT 0,
   UNIQUE(user_id, assessment_id, attempt_number)
 );
 
@@ -122,6 +125,7 @@ CREATE TABLE user_answers (
   selected_option_id UUID REFERENCES options(id) ON DELETE SET NULL, -- for MCQ
   answer_text TEXT, -- for LOG
   score INT, -- for LOG grading
+  is_correct BOOLEAN,
   reviewer_feedback TEXT, -- for subjective LOG/F2F feedback per question
   UNIQUE(attempt_id, question_id)
 );
@@ -149,4 +153,22 @@ CREATE TABLE user_powers (
   power_id UUID REFERENCES powers(id) ON DELETE CASCADE,
   completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY(user_id, power_id)
+);
+
+-- NOTIFICATION HISTORY
+CREATE TABLE IF NOT EXISTS notification_history (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(200),
+  body TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ASSIGNED BADGES
+CREATE TABLE IF NOT EXISTS assigned_badges (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  architect_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  badge_name VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
